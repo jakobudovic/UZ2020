@@ -1,0 +1,35 @@
+function [out_ro, out_theta] = hough_find_lines(Ie, bins_rho, bins_theta, threshold)
+
+max_rho = hypot(size(Ie,1),size(Ie,2)); % Usually the diagonal of the image
+
+val_theta = (linspace(-90, 90, bins_theta) / 180) * pi; % Values of theta are known
+val_rho = linspace(-max_rho, max_rho, bins_rho);
+
+
+%B=[];
+A = zeros(bins_rho, bins_theta);
+[xx,yy] = find(Ie);
+
+
+
+for j = 1:size(xx)
+    
+    for i = 1:bins_theta % Go over all the points
+        rho = xx(j) .* cos(val_theta) + yy(j) .* sin(val_theta); % compute rho for all thetas
+        if bin_rho(j,i) > 0 && bin_rho(j,i) <= bins_rho % Mandatory out-of-bounds check
+            A(bin_rho(j,i), i) = A(bin_rho(j,i), i) + 1; % Increment the accumulator cells
+        end;
+    end;
+    %B(:,:,j) = A;
+end;
+out_ro = bin_rho;  
+%B(:,:) = (A>0);
+%C(:,:) = (A<=threshold);
+%C(:,:) = C&B;
+%A(:,:) = A.*C;
+%out_ro = bin_rho;
+out_theta = bins_theta;
+
+imagesc(A)
+% Display status of the accumulator
+%x cos(val_theta) + y sin(val_theta) = rho.
